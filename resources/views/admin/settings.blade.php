@@ -34,6 +34,19 @@
     </div>
     @endif
     <div class="col-lg-4">
+        @if(auth()->user()->isAdmin())
+        <div class="card mb-3 border-primary-subtle">
+            <div class="card-header"><i class="bi bi-database-down me-1 text-primary"></i> Backup Data Praktek</div>
+            <div class="card-body">
+                <p class="small text-secondary mb-3">
+                    Unduh cadangan seluruh data pasien, rekam medis, stok obat, antrean, dan pengaturan dalam format <code>.sql</code> untuk disimpan secara berkala.
+                </p>
+                <a href="{{ route('admin.settings.backup') }}" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-download me-1"></i> Download Backup Database (.sql)
+                </a>
+            </div>
+        </div>
+        @endif
         <div class="card">
             <div class="card-header"><i class="bi bi-shield-lock me-1 text-primary"></i> Ganti Password</div>
             <div class="card-body">

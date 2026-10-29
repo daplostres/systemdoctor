@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SettingController extends Controller
 {
@@ -52,6 +54,48 @@ class SettingController extends Controller
         $request->user()->update(['password' => Hash::make($request->password)]);
 
         return back()->with('success', 'Password berhasil diubah.');
+    }
+
+    /** Unduh Backup Database MySQL (.sql) 1-Klik */
+    public function backupDatabase(): StreamedResponse
+    {
+        $filename = 'backup-praktek-dokter-'.now()->format('Y-m-d_His').'.sql';
+
+        return response()->streamDownload(function () {
+            $pdo = DB::connection()->getPdo();
+            $out = fopen('php://output', 'w');
+
+            fwrite($out, "-- =========================================================\n");
+            fwrite($out, '-- Backup Database Praktek dr. Eko Andrianto'."\n");
+            fwrite($out, '-- Waktu Backup: '.now()->format('Y-m-d H:i:s')."\n");
+            fwrite($out, "-- =========================================================\n\n");
+            fwrite($out, "SET FOREIGN_KEY_CHECKS=0;\n\n");
+
+            $tables = DB::select('SHOW TABLES');
+            foreach ($tables as $tObj) {
+                $table = array_values((array) $tObj)[0];
+                $create = DB::selectOne("SHOW CREATE TABLE `{$table}`");
+                $createSql = ((array) $create)['Create Table'] ?? '';
+
+                fwrite($out, "-- Tabel: `{$table}`\n");
+                fwrite($out, "DROP TABLE IF EXISTS `{$table}`;\n");
+                fwrite($out, $createSql.";\n\n");
+
+                $rows = DB::table($table)->get();
+                if ($rows->isNotEmpty()) {
+                    foreach ($rows as $row) {
+                        $arr = (array) $row;
+                        $cols = array_map(fn ($c) => "`{$c}`", array_keys($arr));
+                        $vals = array_map(fn ($v) => is_null($v) ? 'NULL' : $pdo->quote((string) $v), array_values($arr));
+                        fwrite($out, "INSERT INTO `{$table}` (".implode(', ', $cols).') VALUES ('.implode(', ', $vals).");\n");
+                    }
+                    fwrite($out, "\n");
+                }
+            }
+
+            fwrite($out, "SET FOREIGN_KEY_CHECKS=1;\n");
+            fclose($out);
+        }, $filename, ['Content-Type' => 'application/sql; charset=UTF-8']);
     }
 }
 

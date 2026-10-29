@@ -40,12 +40,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('letters', Admin\MedicalLetterController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
     });
 
-    // Lihat daftar Rekam Medis/Resep, Cetak Kuitansi & Cetak Etiket Obat
+    // Lihat daftar Rekam Medis/Resep, Cetak Kuitansi, Cetak Etiket & Cetak Lembar Resep R/
     Route::middleware('role:doctor,medical_record,pharmacist')->group(function () {
         Route::get('records', [Admin\MedicalRecordController::class, 'index'])->name('records.index');
         Route::get('records/{record}', [Admin\MedicalRecordController::class, 'show'])->name('records.show');
         Route::get('records/{record}/receipt', [Admin\MedicalRecordController::class, 'receipt'])->name('records.receipt');
         Route::get('records/{record}/labels', [Admin\MedicalRecordController::class, 'labels'])->name('records.labels');
+        Route::get('records/{record}/prescription', [Admin\MedicalRecordController::class, 'prescriptionPrint'])->name('records.prescription');
     });
 
     // 4. Stok Obat, Riwayat Mutasi & Konfirmasi Penyerahan Obat (Admin & Petugas Obat)
@@ -70,8 +71,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('users', Admin\UserController::class)->only(['index', 'store', 'destroy']);
     });
 
-    // Pengaturan & ganti password sendiri
+    // Pengaturan, Backup Database & ganti password sendiri
     Route::get('settings', [Admin\SettingController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [Admin\SettingController::class, 'update'])->middleware('role:admin')->name('settings.update');
+    Route::get('settings/backup', [Admin\SettingController::class, 'backupDatabase'])->middleware('role:admin')->name('settings.backup');
     Route::put('settings/password', [Admin\SettingController::class, 'updatePassword'])->name('settings.password');
 });

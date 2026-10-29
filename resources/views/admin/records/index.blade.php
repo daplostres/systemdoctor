@@ -69,6 +69,7 @@
                                 <button class="btn btn-sm btn-success" title="Tandai Obat Sudah Diserahkan"><i class="bi bi-check2-circle"></i> Serahkan</button>
                             </form>
                         @endif
+                        <a href="{{ route('admin.records.prescription', $r) }}" class="btn btn-sm btn-outline-secondary" title="Cetak Lembar Resep (R/)"><i class="bi bi-prescription2"></i> R/</a>
                         <a href="{{ route('admin.records.labels', $r) }}" class="btn btn-sm btn-outline-dark" title="Cetak Etiket Plastik Obat"><i class="bi bi-tag"></i> Etiket</a>
                         <a href="{{ route('admin.records.receipt', $r) }}" class="btn btn-sm btn-outline-primary" title="Cetak Kuitansi"><i class="bi bi-receipt"></i></a>
                         <a href="{{ route('admin.records.show', $r) }}" class="btn btn-sm btn-light" title="Detail"><i class="bi bi-eye"></i></a>

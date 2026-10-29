@@ -13,6 +13,7 @@
     @else
         <a href="{{ route('admin.records.index') }}" class="btn btn-light me-auto"><i class="bi bi-arrow-left"></i> Daftar Resep</a>
     @endif
+    <a href="{{ route('admin.records.prescription', $record) }}" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-medical"></i> Cetak Resep (R/)</a>
     <a href="{{ route('admin.records.labels', $record) }}" class="btn btn-outline-dark"><i class="bi bi-tag"></i> Cetak Etiket Obat</a>
     <a href="{{ route('admin.records.receipt', $record) }}" class="btn btn-outline-primary"><i class="bi bi-receipt"></i> Cetak Struk / Kuitansi</a>
     <button onclick="window.print()" class="btn btn-primary"><i class="bi bi-printer"></i> Cetak Rekam Medis</button>

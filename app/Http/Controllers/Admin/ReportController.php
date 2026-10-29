@@ -57,8 +57,16 @@ class ReportController extends Controller
             ->orderByDesc('total_qty')
             ->limit(5)->get();
 
+        // 10 Penyakit / Diagnosis Terbanyak bulan ini
+        $topDiagnoses = MedicalRecord::query()
+            ->whereBetween('visit_date', [$start->toDateString(), $end->toDateString()])
+            ->select('diagnosis', DB::raw('COUNT(*) as total_cases'))
+            ->groupBy('diagnosis')
+            ->orderByDesc('total_cases')
+            ->limit(10)->get();
+
         return view('admin.reports.index', compact(
-            'month', 'start', 'end', 'records', 'summary', 'dailyChart', 'topMedicines'
+            'month', 'start', 'end', 'records', 'summary', 'dailyChart', 'topMedicines', 'topDiagnoses'
         ));
     }
 

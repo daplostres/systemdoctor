@@ -91,6 +91,14 @@ class MedicalRecordController extends Controller
         return view('admin.records.labels', compact('record'));
     }
 
+    /** Halaman Cetak Lembar Resep Dokter (R/) untuk Apotek Luar */
+    public function prescriptionPrint(MedicalRecord $record)
+    {
+        $record->load(['patient', 'medicineItems.medicine']);
+
+        return view('admin.records.prescription', compact('record'));
+    }
+
     /** Tandai obat sudah disiapkan & diserahkan ke pasien oleh pengelola obat */
     public function dispense(MedicalRecord $record)
     {

@@ -86,21 +86,55 @@
 </div>
 
 <div class="row g-3 mb-4 d-print-none">
-    <div class="col-lg-8">
-        <div class="card h-100">
+    <div class="col-lg-12">
+        <div class="card">
             <div class="card-header"><i class="bi bi-bar-chart-line me-1 text-primary"></i> Grafik Pemasukan Harian — {{ $start->translatedFormat('F Y') }}</div>
-            <div class="card-body"><canvas id="incomeChart" height="110"></canvas></div>
+            <div class="card-body"><canvas id="incomeChart" height="80"></canvas></div>
         </div>
     </div>
-    <div class="col-lg-4">
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
         <div class="card h-100">
-            <div class="card-header"><i class="bi bi-capsule-pill me-1 text-primary"></i> Obat Terbanyak Diresepkan</div>
+            <div class="card-header"><i class="bi bi-clipboard2-pulse me-1 text-primary"></i> 10 Penyakit / Diagnosis Terbanyak ({{ $start->translatedFormat('F Y') }})</div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0 small">
+                    <thead><tr><th>#</th><th>Diagnosis Penyakit</th><th class="text-center">Jumlah Kasus</th><th style="width:32%">Proporsi</th></tr></thead>
+                    <tbody>
+                    @php($totalCases = max(1, $summary['visits']))
+                    @forelse($topDiagnoses as $idx => $d)
+                        @php($pct = round(($d->total_cases / $totalCases) * 100))
+                        <tr>
+                            <td class="text-secondary">{{ $idx + 1 }}</td>
+                            <td class="fw-semibold">{{ $d->diagnosis }}</td>
+                            <td class="text-center"><span class="badge bg-primary-subtle text-primary">{{ $d->total_cases }} pasien</span></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 7px">
+                                        <div class="progress-bar bg-primary" style="width: {{ $pct }}%"></div>
+                                    </div>
+                                    <span class="text-secondary">{{ $pct }}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="4" class="text-center text-secondary py-3">Belum ada data diagnosis bulan ini.</td></tr>
+                    @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-capsule-pill me-1 text-primary"></i> 5 Obat Terbanyak Diresepkan ({{ $start->translatedFormat('F Y') }})</div>
             <ul class="list-group list-group-flush">
                 @forelse($topMedicines as $tm)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                             <div class="fw-semibold">{{ $tm->name }}</div>
-                            <small class="text-secondary">Rp {{ number_format($tm->total_sales, 0, ',', '.') }}</small>
+                            <small class="text-secondary">Total Penjualan: Rp {{ number_format($tm->total_sales, 0, ',', '.') }}</small>
                         </div>
                         <span class="badge bg-primary-subtle text-primary">{{ $tm->total_qty }} {{ $tm->unit }}</span>
                     </li>

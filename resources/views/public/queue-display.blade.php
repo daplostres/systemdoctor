@@ -37,7 +37,7 @@
         </button>
         <div class="text-end">
             <div class="small opacity-75">Waktu Sekarang</div>
-            <div class="fw-bold fs-5" id="clock">{{ now()->translatedFormat('l, d F Y · H:i:s') }}</div>
+            <div class="fw-bold fs-5" id="clock">{{ now('Asia/Jakarta')->translatedFormat('l, d F Y · H:i') }} WIB</div>
         </div>
     </div>
 </header>

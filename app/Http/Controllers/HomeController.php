@@ -73,7 +73,7 @@ class HomeController extends Controller
             ->where('status', 'completed')->count();
 
         return response()->json([
-            'date_label' => now()->translatedFormat('l, d F Y · H:i:s'),
+            'date_label' => now('Asia/Jakarta')->translatedFormat('l, d F Y · H:i').' WIB',
             'current' => $current ? [
                 'id' => $current->id,
                 'queue_number' => str_pad($current->queue_number, 2, '0', STR_PAD_LEFT),
