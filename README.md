@@ -43,14 +43,104 @@ Semua akun di bawah ini menggunakan password: **`password`**
 
 ---
 
-## Cara Menjalankan (Lokal / 1 Komputer)
+## Tutorial Instalasi & Pemasangan dari GitHub (Download ZIP / Git Clone)
+
+Jika Anda mengunduh source code project ini dari GitHub (baik melalui **Download ZIP** maupun **`git clone`**), folder `vendor/` dan file `.env` tidak ikut terunduh karena dikecualikan di `.gitignore`. Ikuti langkah-langkah berurutan di bawah ini untuk memasang dan menjalankan aplikasi di komputer baru:
+
+### 1. Prasyarat Software yang Harus Terpasang
+Pastikan komputer Anda sudah terinstal:
+- **PHP Minimal Versi 8.3+** (Direkomendasikan menggunakan **Laragon** atau **XAMPP** terbaru).
+- **Database MySQL / MariaDB** (Bawaan dari Laragon / XAMPP).
+- **Composer** (Dependency Manager untuk PHP — dapat diunduh di [getcomposer.org](https://getcomposer.org/)).
+
+---
+
+### 2. Langkah-Langkah Pemasangan (Step-by-Step)
+
+#### Langkah 1: Download & Ekstrak File dari GitHub
+- **Cara A (Download ZIP):**
+  1. Buka halaman repository GitHub project ini.
+  2. Klik tombol hijau **`<> Code`** lalu pilih **`Download ZIP`**.
+  3. **Ekstrak (Unzip)** file `.zip` tersebut ke komputer Anda (misalnya di `C:\laragon\www\praktek-dokter` atau `C:\xampp\htdocs\praktek-dokter`).
+- **Cara B (Menggunakan Git Clone):**
+  ```bash
+  git clone https://github.com/username-anda/nama-repo-anda.git praktek-dokter
+  cd praktek-dokter
+  ```
+
+#### Langkah 2: Buka Terminal / CMD di Dalam Folder Project
+Buka **Command Prompt (CMD)**, **PowerShell**, atau **Terminal Laragon / VS Code**, lalu pastikan posisi direktori sudah berada di dalam folder hasil ekstrak project:
+```bash
+cd C:\laragon\www\praktek-dokter
+```
+*(Sesuaikan lokasi folder tempat Anda mengekstrak file ZIP tadi).*
+
+#### Langkah 3: Install Library PHP (`vendor`) dengan Composer
+Jalankan perintah berikut untuk mengunduh semua komponen Laravel ke dalam folder `vendor`:
+```bash
+composer install
+```
+> **Tips jika muncul error ekstensi PHP (`ext-zip` / `ext-gd` / `ext-fileinfo`):** Pastikan ekstensi tersebut sudah diaktifkan (hilangkan tanda `;` di depan nama ekstensi pada file `php.ini` di Laragon/XAMPP), lalu jalankan ulang `composer install`.
+
+#### Langkah 4: Salin File Konfigurasi `.env` & Generate App Key
+Karena file `.env` tidak disertakan di GitHub, salin dari file `.env.example` yang sudah disediakan:
+
+- **Di Windows (CMD / PowerShell):**
+  ```powershell
+  copy .env.example .env
+  ```
+- **Di Git Bash / Mac / Linux:**
+  ```bash
+  cp .env.example .env
+  ```
+
+Setelah file `.env` terbentuk, jalankan perintah ini untuk membuat kunci enkripsi aplikasi (`APP_KEY`):
+```bash
+php artisan key:generate
+```
+
+#### Langkah 5: Buat Database MySQL Baru
+1. Nyalakan **MySQL** di aplikasi **Laragon** (*Start All*) atau **XAMPP Control Panel** (*Start Apache & MySQL*).
+2. Buka **phpMyAdmin** (`http://localhost/phpmyadmin`) atau **HeidiSQL**.
+3. Buat database baru yang masih kosong dengan nama:
+   ```text
+   praktek_dokter
+   ```
+4. Buka file **`.env`** di kode editor (VS Code / Notepad), pastikan pengaturan database sudah sesuai (secara bawaan sudah diatur seperti ini di `.env.example`):
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=praktek_dokter
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+#### Langkah 6: Buat Tabel Otomatis & Isi Data Awal (Migrate + Seeder)
+Jalankan perintah berikut agar Laravel membuat seluruh tabel database beserta **5 akun login petugas default**, jadwal praktek, layanan, contoh stok obat, dan data awal:
 ```bash
 php artisan migrate:fresh --seed
+```
+
+#### Langkah 7: Jalankan Server Aplikasi (Lokal / 1 Komputer)
+```bash
 php artisan serve
 ```
+Sekarang aplikasi sudah siap dibuka di browser pada alamat:
 - **Website Utama:** `http://localhost:8000`
 - **Layar TV Antrean Ruang Tunggu:** `http://localhost:8000/antrean`
 - **Login Panel Admin & Petugas:** `http://localhost:8000/login`
+
+---
+
+### 💡 Cara Cepat (1 Perintah Sekaligus setelah Buat Database)
+Jika Anda sudah mengekstrak ZIP dan sudah membuat database `praktek_dokter` di MySQL, Anda juga bisa langsung menjalankan script otomatis yang sudah disiapkan di `composer.json`:
+```bash
+composer install
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan serve
+```
 
 ---
 
